@@ -1,8 +1,20 @@
 from django.shortcuts import render
 from rest_framework import generics
 from authentication.serializers import RegisterSerializer, LoginSerializer
-from rest_framework import response, status
+from rest_framework import response, status, permissions
 from django.contrib.auth import authenticate
+
+class AuthUserAPIView(generics.RetrieveAPIView):
+
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+
+        user = request.user
+
+        serializer = RegisterSerializer(user)
+
+        return response.Response({'user': serializer.data}, status=status.HTTP_200_OK)
 
 class RegisterAPIView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
@@ -30,7 +42,5 @@ class LoginAPIView(generics.CreateAPIView):
             serializer = self.serializer_class(user)
 
             return response.Response(serializer.data, status=status.HTTP_200_OK)
-        
-        else:
 
-            return response.Response({'message': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+        return response.Response({'message': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)

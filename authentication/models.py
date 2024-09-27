@@ -93,7 +93,7 @@ class User(AbstractBaseUser, PermissionsMixin, TrackingModel):
         payload = {
             'username': self.username,
             'email': self.email,
-            'exp': datetime.now(timezone.utc) + timedelta(hours=24)  # Set expiration time
+            'exp': datetime.utcnow() + timedelta(hours=24)  # Set expiration time
         }
 
         # Encode the token using the secret key and HS256 algorithm
